@@ -12,12 +12,21 @@ server_address = ('localhost', 10000)
 
 d,t,f=genfromtxt("parout.csv",delimiter='\t',unpack='True')
 
-db=[struct.pack('f',d[i]) for i in range(len(d))]
+db=[struct.pack('f',d[i]) for i in range(10000)]
+
+
+
+#bytelist=db[0]
+for i in range(2):
+    for j in range(10):
+        bytelist=bytelist+db[j+i*100]
+    sent = sock.sendto(bytelist, server_address)
+
 
 
 # Send data
-#sent = sock.sendto(message, server_address)
-sent = sock.sendto(db[0], server_address)
-print("message sent")
+#for i in range(len(db)):
+#    sock.sendto(db[i], server_address)
+#    print("sent message:",i)
 
 

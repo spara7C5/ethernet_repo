@@ -21,7 +21,6 @@ def init_socket():
     # Set the socket parameters
     host = "localhost"
     port = 10000
-    buf = 10240
     addr = (host,port)
 
     # Create socket and bind to address
@@ -38,11 +37,7 @@ if __name__ == '__main__':
     while 1:
         data,addr = UDPSock.recvfrom(4)
         p=unpack('f',data) 
-        array = plot.get_offsets()
-        array = numpy.append(array, numpy.array([x,p[0]]))
-        x+=1
-        plot.set_offsets(array)
-        fig.canvas.draw()
+        print(p[0])
     UDPSock.close()
 
 
