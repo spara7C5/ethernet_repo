@@ -23,12 +23,12 @@ d=d[0:10000]
 t=t[0:10000]
 
 winlen=100
-shilen=1
-shitime=0.01 # equal to update time
+shilen=20
+shitime=0.1 # equal to update time
 unpstr='{}f'.format(shilen)
 bytelen=4*shilen
 x=range(winlen)
-yd=d[0 :winlen]
+yd=[0 for i in range(winlen)]
 yt=t[0:winlen]
 dwin=yd
 
@@ -40,32 +40,35 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 line1, = ax.plot(x, yd)
 line2,=ax.plot(x,yt)
+
 # Returns a tuple of line objects, thus the comma
 fig.canvas.draw()
 fig.canvas.flush_events()
 
-
+j=0
 while 1:
     timestart=time.time()
     data,addr=UDPSock.recvfrom(bytelen)
     p=list(unpack(unpstr,data))
-    time.sleep(shitime)
+    #time.sleep(shitime)
     dwin[0:winlen-shilen]=dwin[shilen:winlen]
     dwin[winlen-shilen:winlen]=p
     line1.set_ydata(dwin)
-    
+    ax.relim()
+    ax.autoscale_view()
     fig.canvas.draw()
     fig.canvas.flush_events()
-    print(time.time()-timestart)
+    j+=1
+    print("data n:",j,"time:",time.time()-timestart)
 
-for i in range(int((len(d)-winlen)/shilen)):
-    time.sleep(shitime)
-    dwin[0:winlen-shilen]=dwin[shilen:winlen]
-    dwin[winlen-shilen:winlen]=d[winlen+shilen*i:winlen+shilen*(i+1)]
-    line1.set_ydata(dwin)
-    fig.canvas.draw()
-    fig.canvas.flush_events()
-    print("update num:",i)
+#for i in range(int((len(d)-winlen)/shilen)):
+#    time.sleep(shitime)
+#    dwin[0:winlen-shilen]=dwin[shilen:winlen]
+#    dwin[winlen-shilen:winlen]=d[winlen+shilen*i:winlen+shilen*(i+1)]
+#    line1.set_ydata(dwin)
+#    fig.canvas.draw()
+#    fig.canvas.flush_events()
+#    print("update num:",i)
 
 
 input()

@@ -2,24 +2,31 @@ import socket
 import sys
 from numpy import *
 import struct
+import time
 
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 server_address = ('localhost', 10000)
 
-
+chunck=10000
 
 d,t,f=genfromtxt("parout.csv",delimiter='\t',unpack='True')
 
-db=[struct.pack('f',d[i]) for i in range(10000)]
+
+#d=[i for i in range(chunck)]
+db=[struct.pack('f',d[i]) for i in range(chunck)]
 
 
+framelen=20
 
-#bytelist=db[0]
-for i in range(2):
-    for j in range(10):
-        bytelist=bytelist+db[j+i*100]
+for i in range(int(chunck/framelen)):
+    bytelist=db[i*framelen]
+    for j in range(1,framelen):
+        bytelist=bytelist+db[j+i*framelen]
+    print("data n: ",i)
+    print(struct.unpack('f',db[(framelen-1)+i*framelen]))
+    #time.sleep(0.05)
     sent = sock.sendto(bytelist, server_address)
 
 
