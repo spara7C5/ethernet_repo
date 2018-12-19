@@ -22,14 +22,15 @@ d,t,f=np.genfromtxt("parout.csv",delimiter='\t',unpack='True')
 d=d[0:10000]
 t=t[0:10000]
 
-winlen=100
-shilen=20
+winlen=2000
+shilen=500
 shitime=0.1 # equal to update time
 unpstr='{}f'.format(shilen)
 bytelen=4*shilen
 x=range(winlen)
 yd=[0 for i in range(winlen)]
 yt=t[0:winlen]
+yf=f[0:winlen]
 dwin=yd
 
 
@@ -38,10 +39,10 @@ plt.ion()
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-line1, = ax.plot(x, yd)
-line2,=ax.plot(x,yt)
+line1, =ax.plot(x,yd,'red')
+line2, =ax.plot(x,yt,'orange')
+line3, =ax.plot(x,yf,'green')
 
-# Returns a tuple of line objects, thus the comma
 fig.canvas.draw()
 fig.canvas.flush_events()
 
@@ -53,13 +54,19 @@ while 1:
     #time.sleep(shitime)
     dwin[0:winlen-shilen]=dwin[shilen:winlen]
     dwin[winlen-shilen:winlen]=p
+    dwin[0:winlen-shilen]=dwin[shilen:winlen]
+    dwin[winlen-shilen:winlen]=p
+    dwin[0:winlen-shilen]=dwin[shilen:winlen]
+    dwin[winlen-shilen:winlen]=p
     line1.set_ydata(dwin)
+    line2.set_ydata(dwin)
+    line3.set_ydata(dwin)
     ax.relim()
     ax.autoscale_view()
     fig.canvas.draw()
-    fig.canvas.flush_events()
-    j+=1
+    fig.canvas.flush_events() # permits to interact with the plot window
     print("data n:",j,"time:",time.time()-timestart)
+    j+=1
 
 #for i in range(int((len(d)-winlen)/shilen)):
 #    time.sleep(shitime)
